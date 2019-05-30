@@ -1,0 +1,7 @@
+cmake-build-debug/
+.vscode/
+.idea/
+CMakeList.txt
+a.out
+.DS_Store
+
