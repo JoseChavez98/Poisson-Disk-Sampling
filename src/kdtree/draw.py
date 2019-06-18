@@ -39,7 +39,7 @@ if k == 2:
 
 	else:
 		drawUserPoint(k,sys.argv,plt)
-
+		drawNNPoint(k,plt)
 	plt.show()
 
 elif k == 3:
@@ -54,7 +54,8 @@ elif k == 3:
 
 	if input_point:
 		drawUserPoint(k,sys.argv,ax)
-		
+		drawNNPoint(k,ax)
+
 	plt.show()
 
 else:

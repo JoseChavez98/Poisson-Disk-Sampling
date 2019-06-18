@@ -87,6 +87,14 @@ public:
         return (comparingVal() > cmp.comparingVal()); 
     } 
 
+    double ecuclidiana(Node<T> *goal) {
+        double answer = 0;
+        for(int i = 0; i < position.size();i++)
+        {
+            answer += pow((goal->pos(i)) - this->pos(i),2);
+        }
+        return (double)sqrt(answer);
+    }
 };
 
 #endif

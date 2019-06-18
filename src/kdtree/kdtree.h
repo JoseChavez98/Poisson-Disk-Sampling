@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <map>
 #include "node.h"
 #include "medianheap.h"
 
@@ -53,7 +54,7 @@ public:
 	 	{
 	 		vector<T> pos(k,0);
 	 		getline(file, line);
-	 		stringstream sstream2;
+	 		/* stringstream sstream2; */
 	 		sstream.clear();
 	 		sstream << line;
 	 		
@@ -87,8 +88,6 @@ public:
 		}
 		
 	}
-
-
 	// create balanced tree(need loadedd data)
 	void build()
 	{
@@ -215,6 +214,144 @@ public:
 			writeLevel(new_level,cmp);
 		}
 	}
+
+    bool equalNodes(Node<T> *node1,Node<T> *node2) {
+        for (int i = 0; i < k; ++i) {
+            if (node1->pos(i) != node2->pos(i))
+                return false;
+        }
+        return true;
+    }
+
+    bool searchR(Node<T> *root, Node<T> *node, unsigned coordinates) {
+        if (root == NULL)
+            return false;
+        if (equalNodes(root,node))
+            return true;
+        unsigned axis = coordinates % k;
+
+        if (node->pos(axis) < root->pos(axis))
+            return searchR(root->leftChild, node, coordinates + 1);
+
+        return searchR(root->rightChild, node, coordinates + 1);
+        
+    }
+
+    bool search(Node<T> *node) {
+        return searchR(root, node, 0);
+    }
+
+
+    void buscarVecinoGottoRecursive(Node<T> *node, Node<T> *current, double &minDist, Node<T>* &nn)
+    {
+    	if(current == NULL)
+    	{
+    		return;
+    	}
+    	double dist = current->ecuclidiana(node);
+    	if(dist < minDist)
+    	{
+    		minDist = dist;
+    		nn = current;
+    	}
+    	int currentDim = current->getIndex();
+    	if(node->pos(currentDim)-minDist <= current->pos(currentDim))
+    	{
+    		buscarVecinoGottoRecursive(node,current->leftChild,minDist,nn);
+    	}
+    	if(node->pos(currentDim)+minDist > current->pos(currentDim))
+    	{
+    		buscarVecinoGottoRecursive(node,current->rightChild,minDist,nn);	
+    	}
+    	return;
+    }
+
+    void buscarVecinoGotto(Node<T> *node)
+    {
+    	if(root == NULL)
+    	{
+    		return;
+    	}
+    	double minDist = root->ecuclidiana(node);
+    	Node<T> * nn = root;
+    	int currentDim = root->getIndex();
+    	if(node->pos(currentDim)-minDist <= root->pos(currentDim))
+    	{
+    		buscarVecinoGottoRecursive(node,root->leftChild,minDist,nn);
+    	}
+    	if(node->pos(currentDim)+minDist > root->pos(currentDim))
+    	{
+    		buscarVecinoGottoRecursive(node,root->rightChild,minDist,nn);	
+    	}
+    	cout << "GOTTO: "<<endl << minDist<<" ";
+    	nn->print();
+    	cout <<endl;
+
+    	ofstream file;
+		file.open("nn.txt");
+		
+		for(int i = 0; i < k; i++)
+		{
+			file << nn->pos(i) << " ";
+		}
+		file.close();
+
+    }
+
+    void buscarEnRadioRecursive(Node<T> *node, Node<T> *current,vector<Node<T>*> &answer, double radius)
+    {
+    	if(current == NULL)
+    	{
+    		return;
+    	}
+    	double dist = current->ecuclidiana(node);
+    	if(dist <= radius && !equalNodes(current,node))
+    	{
+    		answer.push_back(current);
+    	}
+    	int currentDim = current->getIndex();
+    	if(node->pos(currentDim)-radius <= current->pos(currentDim))
+    	{
+    		buscarEnRadioRecursive(node,current->leftChild,answer, radius);
+    	}
+    	if(node->pos(currentDim)+radius > current->pos(currentDim))
+    	{
+    		buscarEnRadioRecursive(node,current->rightChild,answer,radius);	
+    	}
+    	return;
+    }
+
+    vector<Node<T>*> buscarEnRadio(double radius,Node<T> *node)
+    {
+    	vector<Node<T>*> answer;
+    	if(root == NULL)
+    	{
+    		return answer;
+    	}
+    	double dist = root->ecuclidiana(node);
+
+    	if(dist <= radius && !equalNodes(root,node))
+    		answer.push_back(root);
+
+    	
+    	int currentDim = root->getIndex();
+    	if(node->pos(currentDim)-radius <= root->pos(currentDim))
+    	{
+    		buscarEnRadioRecursive(node,root->leftChild,answer,radius);
+    	}
+    	if(node->pos(currentDim)+radius > root->pos(currentDim))
+    	{
+    		buscarEnRadioRecursive(node,root->rightChild,answer,radius);	
+    	}
+    	
+    	for(int i = 0; i < answer.size();i++)
+    	{
+	    	Node<T> * nn = answer[i];
+	    	nn->print();
+    	}
+    	cout <<endl;
+		return answer;
+    }
 
 };
 

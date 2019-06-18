@@ -81,3 +81,15 @@ def drawUserPoint(k,argv,plt):
 		plt.scatter(user_point[0], user_point[1],color="red")
 	else: 
 		plt.scatter(user_point[0], user_point[1],user_point[2],color="red")
+
+def drawNNPoint(k,plt):
+	nnP = []
+	file = open("nn.txt", "r")
+	line = file.readline()
+	array = line.split(" ")
+	for j in range(k):
+		nnP.append(int(array[j]))
+	if k == 2:
+		plt.scatter(nnP[0], nnP[1],color="green")
+	else:
+		plt.scatter(nnP[0], nnP[1],nnP[2],color="green")		
